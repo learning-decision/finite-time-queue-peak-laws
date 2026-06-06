@@ -46,25 +46,6 @@ and simulation contracts.
 - **Slack:** exactly one of **`model.epsilon`** or **`model.epsilons`**; each entry strictly in **(0, 1)**.
 - **State:** \(Q_t\) is an **`n×n`** VOQ matrix.
 
-### GG1 model block (`model.type: gg1`)
-
-Discrete-time **single-server** queue (G/G/1-style baseline in slot form).
-
-- **Slack:** exactly one of **`model.epsilon`** or **`model.epsilons`**; each entry strictly in **(0, 1)**.
-- **State:** \(Q_t\) is a **vector** in \(\mathbb{R}^d\) with **`d = 1`** (shape `(1,)` in code).
-- **Arrivals:** must use **`arrivals.type: bernoulli_gg1`**. Default Bernoulli mean is **`1 - model.epsilon`**; optional explicit **`arrivals.lambda`** overrides.
-
-### Bipartite matching model block (`model.type: bipartite_matching`)
-
-- **Graph:** bipartite compatibility graph \(G=(\mathcal L,\mathcal R,\mathcal E)\).
-- **`model.L`, `model.K`:** required, positive integers.
-- **`model.edges`:** required, non-empty list of **0-based** integer pairs `[[l, r], ...]`.
-- **Slack:** exactly one of **`model.epsilon`** or **`model.epsilons`**; each entry strictly in **(0, 1)**.
-- **State:** \(Q_t=(Q_t^L,Q_t^R)\in\mathbb{R}_+^{L+K}\) (shape `(L+K,)`).
-- **Per-slot matching decision:** edge-level binary action \(X_t(e)\in\{0,1\}\) with node-degree constraints.
-- **State-dependent feasibility:** a match on edge \((\ell,r)\) requires both endpoints nonempty.
-- **MaxWeight objective:** maximize edge weights \(w(\ell,r)=Q_t^L(\ell)+Q_t^R(r)\).
-
 ### Parallel-server model block (`model.type: parallel_server`)
 
 Skill-based routing with **persistent servers**.
@@ -87,9 +68,7 @@ Skill-based routing with **persistent servers**.
 ### Arrivals (registry)
 
 - **`iid_bernoulli`** (IQS): per-VOQ Bernoulli rate \(\lambda_{ij}=(1-\varepsilon)/n\).
-- **`bernoulli_gg1`** (GG1): default `lambda = 1 - epsilon`; optional `arrivals.lambda` override.
 - **`bernoulli_customer`** (parallel server): default \(\lambda_\ell=(1-\varepsilon)\mu K/L\); optional `arrivals.lambdas` override.
-- **`bernoulli_bipartite`** (bipartite matching): default uniform side loads calibrated to slack; optional `arrivals.lambda_L` / `arrivals.lambda_R` override.
 
 ### Simulation block
 
@@ -147,9 +126,8 @@ Skill-based routing with **persistent servers**.
 
 ### MaxWeight
 
-- Supported for **IQS**, **GG1**, **bipartite_matching**, **parallel_server**.
+- Supported for **IQS** and **parallel_server**.
 - **IQS solver:** `scipy.optimize.linear_sum_assignment` on `-Q` (O(n³) per slot).
-- **GG1:** `S_t = 1` if `Q_t > 0`, else `0`.
 - **Parallel server:** extended bipartite assignment using SciPy's linear sum assignment.
 
 ---

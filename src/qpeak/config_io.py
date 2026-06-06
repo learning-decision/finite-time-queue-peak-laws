@@ -165,35 +165,6 @@ def validate_model_parameters(model: dict[str, Any]) -> None:
         n = model["n"]
         if not isinstance(n, int) or isinstance(n, bool) or n < 1:
             raise TypeError("model.n must be a positive integer when model.type is 'iqs'.")
-    elif mtype == "gg1":
-        _validate_slack_scalar_or_list(model, kind="gg1")
-    elif mtype == "bipartite_matching":
-        _validate_slack_scalar_or_list(model, kind="bipartite_matching")
-        if "L" not in model or "K" not in model:
-            raise KeyError("model.L and model.K are required when model.type is 'bipartite_matching'.")
-        L = model["L"]
-        K = model["K"]
-        if not isinstance(L, int) or isinstance(L, bool) or L < 1:
-            raise TypeError("model.L must be a positive integer for model.type 'bipartite_matching'.")
-        if not isinstance(K, int) or isinstance(K, bool) or K < 1:
-            raise TypeError("model.K must be a positive integer for model.type 'bipartite_matching'.")
-        if "edges" not in model:
-            raise KeyError("model.edges is required for model.type 'bipartite_matching'.")
-        edges = model["edges"]
-        if not isinstance(edges, list) or len(edges) < 1:
-            raise TypeError("model.edges must be a non-empty list of [l, r] pairs (0-based).")
-        for i, e in enumerate(edges):
-            if not isinstance(e, list) or len(e) != 2:
-                raise TypeError(f"model.edges[{i}] must be a length-2 list [l, r].")
-            l, r = e[0], e[1]
-            if not isinstance(l, int) or isinstance(l, bool):
-                raise TypeError(f"model.edges[{i}][0] must be an int.")
-            if not isinstance(r, int) or isinstance(r, bool):
-                raise TypeError(f"model.edges[{i}][1] must be an int.")
-            if not (0 <= l < int(L)):
-                raise ValueError(f"model.edges[{i}][0] out of range for L={L}.")
-            if not (0 <= r < int(K)):
-                raise ValueError(f"model.edges[{i}][1] out of range for K={K}.")
     elif mtype == "parallel_server":
         _validate_slack_scalar_or_list(model, kind="parallel_server")
         if "L" not in model or "K" not in model:
@@ -242,15 +213,6 @@ def validate_arrivals_for_model(cfg: dict[str, Any]) -> None:
     mtype = cfg["model"]["type"]
     arr = cfg["arrivals"]
     atype = arr["type"]
-    if mtype == "gg1":
-        if atype != "bernoulli_gg1":
-            raise ValueError("When model.type is 'gg1', arrivals.type must be 'bernoulli_gg1'.")
-        if "lambda" in arr:
-            lam = arr["lambda"]
-            if not isinstance(lam, (int, float)) or isinstance(lam, bool):
-                raise TypeError("arrivals.lambda must be numeric in (0, 1) when present.")
-            if not (0 < float(lam) < 1):
-                raise ValueError("arrivals.lambda must lie strictly in (0, 1) when present.")
     if mtype == "parallel_server":
         if atype != "bernoulli_customer":
             raise ValueError(
@@ -266,36 +228,6 @@ def validate_arrivals_for_model(cfg: dict[str, Any]) -> None:
                     raise TypeError(f"arrivals.lambdas[{i}] must be numeric in (0, 1).")
                 if not (0 < float(x) < 1):
                     raise ValueError(f"arrivals.lambdas[{i}] must lie strictly in (0, 1).")
-    if mtype == "bipartite_matching":
-        if atype != "bernoulli_bipartite":
-            raise ValueError(
-                "When model.type is 'bipartite_matching', arrivals.type must be 'bernoulli_bipartite'."
-            )
-        L = int(cfg["model"]["L"])
-        K = int(cfg["model"]["K"])
-        if "lambda_L" in arr and "lambda_R" not in arr:
-            raise ValueError(
-                "arrivals.lambda_L without arrivals.lambda_R is not supported. "
-                "Set both, or set only lambda_R for asymmetric (parallel-server) mode."
-            )
-        if "lambda_L" in arr:
-            lam_L = arr["lambda_L"]
-            if not isinstance(lam_L, list) or len(lam_L) != L:
-                raise TypeError("arrivals.lambda_L must be a list of length L when present.")
-            for i, x in enumerate(lam_L):
-                if not isinstance(x, (int, float)) or isinstance(x, bool):
-                    raise TypeError(f"arrivals.lambda_L[{i}] must be numeric in (0,1).")
-                if not (0 < float(x) < 1):
-                    raise ValueError(f"arrivals.lambda_L[{i}] must lie strictly in (0,1).")
-        if "lambda_R" in arr:
-            lam_R = arr["lambda_R"]
-            if not isinstance(lam_R, list) or len(lam_R) != K:
-                raise TypeError("arrivals.lambda_R must be a list of length K when present.")
-            for i, x in enumerate(lam_R):
-                if not isinstance(x, (int, float)) or isinstance(x, bool):
-                    raise TypeError(f"arrivals.lambda_R[{i}] must be numeric in (0,1).")
-                if not (0 < float(x) < 1):
-                    raise ValueError(f"arrivals.lambda_R[{i}] must lie strictly in (0,1).")
 
 
 def validate_recording(cfg: dict[str, Any]) -> None:
@@ -442,19 +374,6 @@ def summarize_config(cfg: dict[str, Any]) -> str:
     ]
     if m.get("type") == "iqs":
         lines.append(f"  model.n        = {m['n']!r}")
-        if "epsilons" in m:
-            lines.append(f"  model.epsilons = {m['epsilons']!r}  (CLI runs one bundle per value)")
-        else:
-            lines.append(f"  model.epsilon  = {m['epsilon']!r}")
-    if m.get("type") == "gg1":
-        if "epsilons" in m:
-            lines.append(f"  model.epsilons = {m['epsilons']!r}  (CLI runs one bundle per value)")
-        else:
-            lines.append(f"  model.epsilon  = {m['epsilon']!r}")
-    if m.get("type") == "bipartite_matching":
-        lines.append(f"  model.L        = {m['L']!r}")
-        lines.append(f"  model.K        = {m['K']!r}")
-        lines.append(f"  model.|E|      = {len(m.get('edges', []))!r}")
         if "epsilons" in m:
             lines.append(f"  model.epsilons = {m['epsilons']!r}  (CLI runs one bundle per value)")
         else:

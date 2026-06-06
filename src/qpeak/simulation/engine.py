@@ -10,8 +10,6 @@ from typing import Any
 import numpy as np
 
 from qpeak.compose import compose_experiment
-from qpeak.models.bipartite_matching import BipartiteMatchingModel
-from qpeak.models.gg1 import GG1Model
 from qpeak.models.iqs import IQSModel
 from qpeak.models.parallel_server import ParallelServerModel
 from qpeak.recording import write_replication_path
@@ -27,12 +25,6 @@ def _initial_queue_state(model: Any) -> tuple[np.ndarray, int]:
     if isinstance(model, IQSModel):
         n = model.n
         return np.zeros((n, n), dtype=float), n
-    if isinstance(model, GG1Model):
-        d = model.d
-        return np.zeros((d,), dtype=float), d
-    if isinstance(model, BipartiteMatchingModel):
-        d = model.dim
-        return np.zeros((d,), dtype=float), d
     if isinstance(model, ParallelServerModel):
         d = model.dim  # == L
         return np.zeros((d,), dtype=float), d
@@ -82,14 +74,7 @@ _SERIES_REGISTRY: dict[str, tuple[str, Any]] = {
 
 def _build_series_registry(model: Any) -> dict[str, tuple[str, Any]]:
     """Extend the global series registry with model-specific metrics."""
-    reg = dict(_SERIES_REGISTRY)
-    if isinstance(model, BipartiteMatchingModel):
-        L = model.L
-        reg["customer_l1"] = ("level", lambda q, _L=L: float(np.sum(np.abs(q[:_L]))))
-        reg["customer_l2"] = ("level", lambda q, _L=L: float(np.linalg.norm(q[:_L])))
-        reg["peak_customer_l1_so_far"] = ("peak", lambda q, _L=L: float(np.sum(np.abs(q[:_L]))))
-        reg["peak_customer_l2_so_far"] = ("peak", lambda q, _L=L: float(np.linalg.norm(q[:_L])))
-    return reg
+    return dict(_SERIES_REGISTRY)
 
 
 @dataclass(frozen=True)

@@ -2,10 +2,10 @@
 
 Thank you for your interest in this repository.
 
-This is primarily a research-code release accompanying the paper
+This is a research-code release accompanying the paper
 "Finite-Time Queue Peak Laws in Stochastic Networks: Logarithmic Scaling After Geometric Thresholds."
 The main purpose of the repository is reproducibility, not ongoing feature development.
-That said, bug reports and targeted improvements are welcome.
+Bug reports and targeted improvements are welcome.
 
 ## Ground rules
 
@@ -21,16 +21,35 @@ That said, bug reports and targeted improvements are welcome.
 src/qpeak/     simulation package (models, arrivals, policies, engine)
 configs/       JSON experiment configs (one config = one experiment)
 scripts/       plotting scripts and shell reproduction wrappers
+notebooks/     self-contained Jupyter notebooks (experiments 2 and 3)
 main.py        entry point: python main.py <config.json>
 ```
 
 ## Running experiments
 
+The paper has three experiments. All can be run independently.
+
+**Experiment 1 — Two-phase envelope (IQS + parallel server)**
+
 ```bash
-python main.py configs/smoke_iqs.json           # quick smoke test
-bash scripts/reproduce_fig_appendix.sh          # appendix figures (~minutes)
-bash scripts/reproduce_fig_main.sh              # main figures (~30-45 min, 10 cores)
+python main.py configs/smoke_parallel_server.json   # quick smoke test
+bash scripts/reproduce_fig_appendix.sh              # appendix figures
+bash scripts/reproduce_fig_main.sh                  # main figures 
 ```
+
+**Experiment 2 — Two-queue MaxWeight: simulation vs theoretical bounds**
+
+```bash
+cd notebooks && jupyter notebook 2q.ipynb
+```
+
+**Experiment 3 — CRP vs non-CRP, synchronous vs independent arrivals**
+
+```bash
+cd notebooks && jupyter notebook CRP_in.ipynb
+```
+
+Experiments 2 and 3 are self-contained notebooks; they do not use the `qpeak` package.
 
 ## Adding a new model or policy
 
