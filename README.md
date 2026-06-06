@@ -245,4 +245,4 @@ finite-time-queue-peak-laws/
 
 For questions about the paper or code, please open a GitHub issue or contact the authors.
 
-Hao Liang, Cheng Tang, Yunzong Xu
+Hao Liang, Cheng Tang, Yunzong Xu ({hliang17,chengt6,xyz}@illinois.edu)
