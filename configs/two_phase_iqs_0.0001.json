@@ -1,0 +1,30 @@
+{
+  "_comment": "Two-phase IQS: larger epsilons so crossover T* falls within simulated horizon. T*≈(eps)^{-2}: eps=0.05→T*=400, eps=0.02→T*=2500, eps=0.01→T*=10000. All well within T=500000. Run: python main.py configs/two_phase_iqs.json",
+  "model": {
+    "type": "iqs",
+    "n": 20,
+    "epsilons": [0.0001]
+  },
+  "arrivals": {
+    "type": "iid_bernoulli"
+  },
+  "policy": {
+    "type": "maxweight"
+  },
+  "simulation": {
+    "T": 1000000000,
+    "seed": 42,
+    "num_replications": 50,
+    "output_dir": "_runs/two_phase_iqs",
+    "progress": true,
+    "progress_every": 1000000
+  },
+  "recording": {
+    "full_state": false,
+    "num_paths_to_save": 10
+  },
+  "metrics": {
+    "series": ["totalQ"],
+    "downsample": { "K": 100000, "grid": "raw_time" }
+  }
+}

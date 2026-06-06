@@ -1,0 +1,44 @@
+# Generated experiment outputs (reproduce with scripts/reproduce_all.sh)
+_runs/
+
+# Compiled native simulator binary (rebuilt automatically on first run)
+src/qpeak/simulation/_native_build/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs and temporary outputs
+*.log
+*.tmp

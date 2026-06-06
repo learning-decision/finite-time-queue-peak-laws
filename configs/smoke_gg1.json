@@ -1,0 +1,29 @@
+{
+  "_comment": "Smoke GG1: model.epsilons lists slack values; CLI runs one bundle per value under simulation.output_dir/eps_<slug>/. Run: python main.py configs/smoke_gg1.json",
+  "model": {
+    "type": "gg1",
+    "epsilons": [0.1, 0.05, 0.01, 0.001, 0.0001, 0.00001]
+  },
+  "arrivals": {
+    "type": "bernoulli_gg1"
+  },
+  "policy": {
+    "type": "maxweight"
+  },
+  "simulation": {
+    "T": 200000,
+    "seed": 0,
+    "num_replications": 100,
+    "output_dir": "_runs/smoke_gg1",
+    "progress": true,
+    "progress_every": 1000
+  },
+  "recording": {
+    "full_state": false,
+    "num_paths_to_save": 10
+  },
+  "metrics": {
+    "series": ["totalQ"],
+    "downsample": { "K": 1000, "grid": "raw_time" }
+  }
+}

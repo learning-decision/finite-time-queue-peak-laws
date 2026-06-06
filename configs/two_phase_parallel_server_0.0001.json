@@ -1,0 +1,46 @@
+{
+  "_comment": "Two-phase parallel_server for visible sqrt(T)->logT transition. L=K=40 ring, mu=0.05 (E[D]=20). Crossover T*=(1-mu)/(2*L*mu*eps^2): eps=0.002->T*~59k, eps=0.001->T*~238k, eps=0.0005->T*~950k. D~1.95. T=10M lets eps=0.0005 show a clear sqrt(T) plateau to T~1M then transition. Run: python main.py configs/two_phase_parallel_server.json",
+  "model": {
+    "type": "parallel_server",
+    "L": 40,
+    "K": 40,
+    "_comment_edges": "Ring zigzag: class l compatible with servers l and (l+1)%40. 80 edges, degree 2 each side.",
+    "edges": [
+      [0,0],[0,1],[1,1],[1,2],[2,2],[2,3],[3,3],[3,4],[4,4],[4,5],
+      [5,5],[5,6],[6,6],[6,7],[7,7],[7,8],[8,8],[8,9],[9,9],[9,10],
+      [10,10],[10,11],[11,11],[11,12],[12,12],[12,13],[13,13],[13,14],
+      [14,14],[14,15],[15,15],[15,16],[16,16],[16,17],[17,17],[17,18],
+      [18,18],[18,19],[19,19],[19,20],[20,20],[20,21],[21,21],[21,22],
+      [22,22],[22,23],[23,23],[23,24],[24,24],[24,25],[25,25],[25,26],
+      [26,26],[26,27],[27,27],[27,28],[28,28],[28,29],[29,29],[29,30],
+      [30,30],[30,31],[31,31],[31,32],[32,32],[32,33],[33,33],[33,34],
+      [34,34],[34,35],[35,35],[35,36],[36,36],[36,37],[37,37],[37,38],
+      [38,38],[38,39],[39,39],[39,0]
+    ],
+    "service_time": { "type": "geometric", "mu": 0.05 },
+    "epsilons": [0.0001]
+  },
+  "arrivals": {
+    "type": "bernoulli_customer",
+    "_comment": "Auto-derives lambda_l = (1-eps)*mu*K/L = (1-eps)*0.05 per sub-run."
+  },
+  "policy": {
+    "type": "maxweight"
+  },
+  "simulation": {
+    "T": 10000000000,
+    "seed": 42,
+    "num_replications": 50,
+    "output_dir": "_runs/two_phase_parallel_server",
+    "progress": true,
+    "progress_every": 1000000
+  },
+  "recording": {
+    "full_state": false,
+    "num_paths_to_save": 10
+  },
+  "metrics": {
+    "series": ["totalQ", "peak_totalQ_so_far"],
+    "downsample": { "K": 1000, "grid": "raw_time" }
+  }
+}
