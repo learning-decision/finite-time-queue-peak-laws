@@ -42,3 +42,4 @@ ENV/
 # Logs and temporary outputs
 *.log
 *.tmp
+CODE_RELEASE_CHECKLIST.md

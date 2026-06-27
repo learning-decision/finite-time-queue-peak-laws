@@ -3,7 +3,8 @@
 Simulation code for the paper:
 
 > **Finite-Time Queue Peak Laws in Stochastic Networks: Logarithmic Scaling After Geometric Thresholds**  
-> Hao Liang, Cheng Tang, Yunzong Xu
+> Hao Liang, Cheng Tang, Yunzong Xu  
+> [arXiv:2606.18218](https://arxiv.org/abs/2606.18218)
 
 ---
 
